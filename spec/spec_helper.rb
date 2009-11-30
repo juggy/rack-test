@@ -6,6 +6,13 @@ gem "rack", "~> 1.0.0"
 require "rack/test"
 require File.dirname(__FILE__) + "/fixtures/fake_app"
 
+# monkey patch Rack::Lint, so it will allow our async responses
+class Rack::Lint
+  def check_status(status)
+    assert("Status must be -1 or >=100 seen as integer") { status.to_i == -1 || status.to_i >= 100 }
+  end
+end
+
 Spec::Runner.configure do |config|
   config.include Rack::Test::Methods
 
