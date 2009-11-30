@@ -1,6 +1,6 @@
 = Changes in this version (http://github.com/helle/rack-test)
 
-Includes support for thin style env['async.callback'] method.
+Includes support for thin style async.callback method.
 
 = Rack::Test
 
