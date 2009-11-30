@@ -14,6 +14,11 @@ describe Rack::Test::Session do
   end
 
   describe "#request" do
+    it "should return an async response if any exists" do
+      request "/async"
+      last_response.should be_ok
+    end
+    
     it "requests the URI using GET by default" do
       request "/"
       last_request.should be_get

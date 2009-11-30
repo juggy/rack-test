@@ -117,6 +117,13 @@ module Rack
       delete "/" do
         "Hello, DELETE: #{params.inspect}"
       end
+      
+      get "/async" do
+        
+        env['async.callback'].call(200, {}, ['hello'])
+        
+        [-1, {}, []]
+      end
     end
 
   end
