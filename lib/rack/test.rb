@@ -214,7 +214,7 @@ module Rack
           })
           auth_env.delete('rack.request')
           process_request(uri.path, auth_env)
-        else
+        elsif async?
           yield last_response if block_given?
 
           last_response if 
