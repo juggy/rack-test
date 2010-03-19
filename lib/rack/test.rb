@@ -217,7 +217,7 @@ module Rack
         elsif async?
           yield last_response if block_given?
 
-          last_response if 
+          last_response
         end
       end
 
