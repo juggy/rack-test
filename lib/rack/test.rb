@@ -205,8 +205,10 @@ module Rack
         uri = URI.parse(uri)
         uri.host ||= @default_host
 
-        @rack_mock_session.request(uri, env)
-
+        EventMachine::run {
+          @rack_mock_session.request(uri, env)
+        }
+        
         if retry_with_digest_auth?(env)
           auth_env = env.merge({
             "HTTP_AUTHORIZATION"          => digest_auth_header,
@@ -214,7 +216,7 @@ module Rack
           })
           auth_env.delete('rack.request')
           process_request(uri.path, auth_env)
-        elsif async?
+        else
           yield last_response if block_given?
 
           last_response
@@ -247,15 +249,6 @@ module Rack
       def digest_auth_configured?
         @digest_username
       end
-      
-      def async?
-        @async
-      end
-      
-      def async=(a)
-        @async = a
-      end
-        
 
       def default_env
         { "rack.test" => true, "REMOTE_ADDR" => "127.0.0.1" }.merge(headers_for_env)
