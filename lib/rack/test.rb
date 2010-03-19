@@ -26,7 +26,7 @@ module Rack
       extend Forwardable
       include Rack::Test::Utils
 
-      def_delegators :@rack_mock_session, :clear_cookies, :set_cookie, :last_response, :last_request
+      def_delegators :@rack_mock_session, :clear_cookies, :set_cookie, :last_response, :last_request, :after_request
 
       # Creates a Rack::Test::Session for a given Rack app or Rack::MockSession.
       #
@@ -166,6 +166,7 @@ module Rack
         env.update("HTTPS" => "on") if URI::HTTPS === uri
         env["HTTP_X_REQUESTED_WITH"] = "XMLHttpRequest" if env[:xhr]
 
+        env["REQUEST_URI"] = uri.path
         # TODO: Remove this after Rack 1.1 has been released.
         # Stringifying and upcasing methods has be commit upstream
         env["REQUEST_METHOD"] ||= env[:method] ? env[:method].to_s.upcase : "GET"
