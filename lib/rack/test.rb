@@ -217,7 +217,7 @@ module Rack
         else
           yield last_response if block_given?
 
-          last_response
+          last_response if 
         end
       end
 
@@ -239,14 +239,23 @@ module Rack
       end
 
       def retry_with_digest_auth?(env)
-        last_response.status == 401 &&
         digest_auth_configured? &&
+        last_response.status == 401 &&
         !env["rack-test.digest_auth_retry"]
       end
 
       def digest_auth_configured?
         @digest_username
       end
+      
+      def async?
+        @async
+      end
+      
+      def async=(a)
+        @async = a
+      end
+        
 
       def default_env
         { "rack.test" => true, "REMOTE_ADDR" => "127.0.0.1" }.merge(headers_for_env)

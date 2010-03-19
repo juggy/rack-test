@@ -72,7 +72,9 @@ module Rack
         :digest_authorize,
         :last_response,
         :last_request,
-        :after_request
+        :after_request,
+        :async=,
+        :async?
       ]
 
       def_delegators :current_session, *METHODS
