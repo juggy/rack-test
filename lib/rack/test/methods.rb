@@ -71,7 +71,8 @@ module Rack
         :basic_authorize,
         :digest_authorize,
         :last_response,
-        :last_request
+        :last_request,
+        :after_request
       ]
 
       def_delegators :current_session, *METHODS
