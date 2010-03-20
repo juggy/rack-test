@@ -26,19 +26,20 @@ module Rack
 
     def request(uri, env)
       env["HTTP_COOKIE"] ||= cookie_jar.for(uri)
-      env['async.callback'] = Proc.new do |status, headers, body|
-        @last_response = MockResponse.new(status, headers, body, env["rack.errors"].flush)
-        body.close if body.respond_to?(:close)
-        cookie_jar.merge(last_response.headers["Set-Cookie"], uri)
-
-        @after_request.each { |hook| hook.call }
+      
+      response_chunks = Proc.new do |response|
+        response[-1].each do |chunk| 
+          @after_request.each { |hook| hook.call(chunk) }
+        end
       end
+      
+      env['async.callback'] = response_chunks
 
       @last_request = Rack::Request.new(env)
       
       status, headers, body = @app.call(@last_request.env)
 
-      env['async.callback'].call(status, headers, body) if status != -1
+      #env['async.callback'].call(status, headers, body) if status != -1
 
       @last_response
     end

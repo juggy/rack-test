@@ -205,9 +205,8 @@ module Rack
         uri = URI.parse(uri)
         uri.host ||= @default_host
 
-        EventMachine::run {
-          @rack_mock_session.request(uri, env)
-        }
+        @rack_mock_session.request(uri, env)
+        
         
         if retry_with_digest_auth?(env)
           auth_env = env.merge({
@@ -216,7 +215,7 @@ module Rack
           })
           auth_env.delete('rack.request')
           process_request(uri.path, auth_env)
-        else
+        elsif async?
           yield last_response if block_given?
 
           last_response
@@ -248,6 +247,14 @@ module Rack
 
       def digest_auth_configured?
         @digest_username
+      end
+      
+      def async?
+        @async
+      end
+      
+      def async=(a)
+        @async = a
       end
 
       def default_env
